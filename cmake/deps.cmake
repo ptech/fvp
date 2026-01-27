@@ -1,8 +1,7 @@
 # =============================================================================
-# MDK SDK Default URL Configuration
-# Change this to point to your Artifactory or custom server
+# MDK SDK URL Configuration
+# FVP_DEPS_URL environment variable MUST be set to the base URL for MDK SDK downloads
 # =============================================================================
-set(MDK_SDK_DEFAULT_URL "https://repo.devops.ptech.io/artifactory/tools/mdk-sdk/nightly/20260121")
 
 function(fvp_version)
   set(PUBSPEC_FILE "${CMAKE_CURRENT_LIST_DIR}/../pubspec.yaml")
@@ -40,12 +39,14 @@ macro(fvp_setup_deps)
       set(MDK_SDK_PKG mdk-sdk-linux-x64.tar.xz)
     endif()
   else()
+    # macOS/iOS use podspec, not CMake
+    message(FATAL_ERROR "Unsupported platform for CMake: ${CMAKE_SYSTEM_NAME}. macOS/iOS should use podspec.")
   endif()
-  # FVP_DEPS_URL env var overrides the default URL
+  # FVP_DEPS_URL env var is REQUIRED
   if("$ENV{FVP_DEPS_URL}" MATCHES "^http")
     set(FVP_DEPS_URL $ENV{FVP_DEPS_URL})
   else()
-    set(FVP_DEPS_URL ${MDK_SDK_DEFAULT_URL})
+    message(FATAL_ERROR "FVP_DEPS_URL environment variable is required. Set it to the base URL for MDK SDK downloads (e.g., https://your-server/path/to/mdk-sdk/version)")
   endif()
   set(MDK_SDK_URL ${FVP_DEPS_URL}/${MDK_SDK_PKG})
   set(MDK_SDK_SAVE "${CMAKE_CURRENT_SOURCE_DIR}/${MDK_SDK_PKG}")

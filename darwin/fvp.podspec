@@ -5,13 +5,13 @@
 #
 
 # =============================================================================
-# MDK SDK Default URL Configuration
-# Change this to point to your Artifactory or custom server
+# MDK SDK URL Configuration
+# FVP_DEPS_URL environment variable MUST be set to the base URL for MDK SDK downloads
 # =============================================================================
-MDK_SDK_DEFAULT_URL = 'https://repo.devops.ptech.io/artifactory/tools/mdk-sdk/nightly/20260121'
-
-# FVP_DEPS_URL env var overrides the default URL
-MDK_SDK_URL = ENV['FVP_DEPS_URL'] || MDK_SDK_DEFAULT_URL
+MDK_SDK_URL = ENV['FVP_DEPS_URL']
+unless MDK_SDK_URL
+  raise "FVP_DEPS_URL environment variable is required. Set it to the base URL for MDK SDK downloads."
+end
 
 Pod::Spec.new do |s|
   s.name             = 'fvp'
@@ -51,8 +51,12 @@ Flutter video player plugin.
     FVP_VERSION=`grep 'version: ' ../pubspec.yaml | head -1 | awk '{print $2}'`
     printf '#pragma once\\n#define FVP_VERSION "%s"\\n' "$FVP_VERSION" > ../lib/src/version.h
 
-    # Download mdk-sdk from configured URL
-    MDK_URL="${FVP_DEPS_URL:-#{MDK_SDK_DEFAULT_URL}}/mdk-sdk-apple.tar.xz"
+    # Download mdk-sdk from configured URL (FVP_DEPS_URL is required)
+    if [ -z "$FVP_DEPS_URL" ]; then
+      echo "ERROR: FVP_DEPS_URL environment variable is required"
+      exit 1
+    fi
+    MDK_URL="${FVP_DEPS_URL}/mdk-sdk-apple.tar.xz"
     echo "Downloading mdk-sdk from $MDK_URL"
     if [ ! -d "mdk-sdk" ]; then
       curl -L -o mdk-sdk-apple.tar.xz "$MDK_URL"
