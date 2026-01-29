@@ -8,7 +8,7 @@
 # MDK SDK Default URL Configuration
 # Change this to point to your Artifactory or custom server
 # =============================================================================
-MDK_SDK_DEFAULT_URL = 'https://repo.devops.ptech.io/artifactory/tools/mdk-sdk/nightly/20260121'
+MDK_SDK_DEFAULT_URL = 'https://sourceforge.net/projects/mdk-sdk/files/nightly'
 
 # FVP_DEPS_URL env var overrides the default URL
 MDK_SDK_URL = ENV['FVP_DEPS_URL'] || MDK_SDK_DEFAULT_URL
